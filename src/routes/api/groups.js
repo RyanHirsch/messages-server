@@ -1,23 +1,19 @@
 import express from 'express';
-import Group from '../../models/group-model';
+import { getAll, getOneById } from '../../queries/group-queries';
 import GroupSerializer from '../../serializers/group-serializer';
 
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  Group.find()
-    .exec()
-    .then(groups => {
-      res.json(GroupSerializer.serialize(groups));
-    });
+  getAll().then(groups => {
+    res.json(GroupSerializer.serialize(groups));
+  });
 });
 
 route.get('/:id', (req, res) => {
-  Group.findOne({ _id: req.params.id })
-    .exec()
-    .then(group => {
-      res.json(GroupSerializer.serialize(group));
-    });
+  getOneById(req.params.id).then(group => {
+    res.json(GroupSerializer.serialize(group));
+  });
 });
 
 export default route;

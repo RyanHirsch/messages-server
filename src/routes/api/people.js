@@ -1,23 +1,19 @@
 import express from 'express';
-import Person from '../../models/person-model';
+import { getAll, getOneById } from '../../queries/person-queries';
 import PersonSerializer from '../../serializers/person-serializer';
 
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  Person.find()
-    .exec()
-    .then(people => {
-      res.json(PersonSerializer.serialize(people));
-    });
+  getAll().then(people => {
+    res.json(PersonSerializer.serialize(people));
+  });
 });
 
 route.get('/:id', (req, res) => {
-  Person.findOne({ _id: req.params.id })
-    .exec()
-    .then(person => {
-      res.json(PersonSerializer.serialize(person));
-    });
+  getOneById(req.params.id).then(person => {
+    res.json(PersonSerializer.serialize(person));
+  });
 });
 
 export default route;
