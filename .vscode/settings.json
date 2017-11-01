@@ -1,0 +1,6 @@
+{
+  "nodeTdd.testScript": "test:tdd",
+  "nodeTdd.buildOnActivation": true,
+  "nodeTdd.buildOnCreate": true,
+  "nodeTdd.buildOnDelete": true
+}
