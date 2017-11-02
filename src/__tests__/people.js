@@ -1,7 +1,7 @@
 import request from 'supertest';
-import expect from 'expect';
 import faker from 'faker';
 
+import db from '../../src/db';
 import app from '../../src/app';
 import Person from '../../src/models/person-model';
 
@@ -14,7 +14,7 @@ function fakePerson() {
 describe('Acceptance: /api/people', () => {
   const testSize = 4;
   const people = [...Array(testSize)].map(fakePerson);
-  before(() =>
+  beforeAll(() =>
     Person.remove()
       .exec()
       .then(() => {
@@ -23,14 +23,18 @@ describe('Acceptance: /api/people', () => {
       })
   );
 
+  afterAll(() => {
+    db.close();
+  });
+
   it('returns expected shape', () =>
     request(app)
       .get('/api/people')
       .expect('Content-Type', /json/)
       .expect(200)
       .then(resp => {
-        expect(resp.body).toBeAn('object');
-        expect(resp.body.data).toBeAn('array');
+        expect(resp.body).toEqual(expect.any(Object));
+        expect(resp.body.data).toEqual(expect.any(Array));
       }));
 
   it('can GET all people', () =>
@@ -48,6 +52,6 @@ describe('Acceptance: /api/people', () => {
       .exec()
       .then(person => request(app).get(`/api/people/${person._id}`)) // eslint-disable-line no-underscore-dangle
       .then(resp => {
-        expect(resp.body.data.id).toBeA('string');
+        expect(resp.body.data.id).toEqual(expect.any(String));
       }));
 });

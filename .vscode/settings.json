@@ -1,6 +1,5 @@
 {
-  "nodeTdd.testScript": "test:tdd",
-  "nodeTdd.buildOnActivation": true,
-  "nodeTdd.buildOnCreate": true,
-  "nodeTdd.buildOnDelete": true
+  "nodeTdd.activateOnStartup": false,
+  "jest.autoEnable": true,
+  "jest.enableInlineErrorMessages": true
 }
