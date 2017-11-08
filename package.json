@@ -7,13 +7,14 @@
     "package": "npm run clean && npm run build && docker-compose build",
     "build": "babel src -d dist",
     "build:debug": "npm run build -- --source-maps=inline",
-    "format": "prettier --write --single-quote --trailing-comma es5 --print-width=120 --tab-width=2 \"src/**/*.js\"",
+    "format":
+      "prettier --write --single-quote --trailing-comma es5 --print-width=120 --tab-width=2 \"src/**/*.js\"",
     "lint": "eslint src/**/*.js --quiet",
     "clean": "rm -rf dist/",
     "start": "node dist/index.js",
     "dev": "babel-watch src/index.js",
     "test": "jest --coverage",
-    "test:integration": "jest --config=tests/jest.config.integration.json",
+    "test:integration": "NODE_ENV=test jest --config=tests/jest.config.integration.json",
     "test:watch": "jest --watch"
   },
   "author": "Ryan Hirsch <ryan.hirsch@gmail.com> (http://hirsch.io)",
@@ -51,14 +52,7 @@
   },
   "jest": {
     "testEnvironment": "jest-environment-node",
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "__mocks__",
-      "helpers",
-      "/tests/integration"
-    ]
+    "collectCoverageFrom": ["src/**/*.js"],
+    "testPathIgnorePatterns": ["/node_modules/", "__mocks__", "helpers", "/tests/integration"]
   }
 }
