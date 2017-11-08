@@ -1,0 +1,6 @@
+{
+  "setupFiles": [],
+  "testRegex": "tests/integration/.*.js$",
+  "testPathIgnorePatterns": ["/node_modules/", "__mocks__"],
+  "testEnvironment": "jest-environment-node"
+}
