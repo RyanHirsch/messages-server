@@ -12,12 +12,14 @@
     "clean": "rm -rf dist/",
     "start": "node dist/index.js",
     "dev": "babel-watch src/index.js",
-    "test": "NODE_ENV=test mocha --require babel-register './test/**/*-test.js' --exit",
-    "test:tdd": "NODE_ENV=test mocha --require babel-register './test/**/*-test.js' --reporter tap --exit"
+    "test": "jest --coverage",
+    "test:integration": "jest --config=tests/jest.config.integration.json",
+    "test:watch": "jest --watch"
   },
   "author": "Ryan Hirsch <ryan.hirsch@gmail.com> (http://hirsch.io)",
   "license": "MIT",
   "devDependencies": {
+    "axios": "^0.17.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
@@ -47,5 +49,17 @@
     "morgan": "^1.9.0",
     "serve-static": "^1.13.1",
     "winston": "^2.4.0"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-node",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "__mocks__",
+      "helpers",
+      "/tests/integration"
+    ]
   }
 }

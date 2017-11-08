@@ -2,12 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run mocha",
+      "name": "Run Jest",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
       "stopOnEntry": false,
-      "args": ["--require", "babel-register", "${file}", "--no-timeouts"],
+      "args": ["${file}"],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "sourceMaps": true,
