@@ -1,19 +1,14 @@
 import express from 'express';
-import { getAll, getOneById } from '../../queries/person-queries';
-import PersonSerializer from '../../serializers/person-serializer';
+import { getAllHandler, getHandler } from '../../handlers/people-handler';
 
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  getAll().then(people => {
-    res.json(PersonSerializer.serialize(people));
-  });
+  getAllHandler().then(people => res.json(people));
 });
 
 route.get('/:id', (req, res) => {
-  getOneById(req.params.id).then(person => {
-    res.json(PersonSerializer.serialize(person));
-  });
+  getHandler(req.params.id).then(person => res.json(person));
 });
 
 export default route;
