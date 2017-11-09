@@ -2,7 +2,6 @@ import axios from 'axios';
 import faker from 'faker';
 
 import startApp from '../../src/app';
-import config from '../../src/config';
 import Group from '../../src/models/group-model';
 
 function fakeGroup() {
@@ -13,7 +12,7 @@ function fakeGroup() {
 
 describe('Acceptance: /api/groups', () => {
   let app;
-  const { port } = config;
+  const port = Math.floor(Math.random() * 2000) + 3500;
   const api = axios.create({
     baseURL: `http://localhost:${port}/api`,
   });
