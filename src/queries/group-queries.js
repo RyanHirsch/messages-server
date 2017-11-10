@@ -11,3 +11,7 @@ export function getOne(query) {
 export function getOneById(id) {
   return getOne({ _id: id });
 }
+
+export function create(group) {
+  return new Group(group).save();
+}

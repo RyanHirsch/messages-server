@@ -4,6 +4,7 @@ import compression from 'compression';
 import cors from 'cors';
 import serveStatic from 'serve-static';
 import morgan from 'morgan';
+import bodyParser from 'body-parser';
 
 import { stream } from './logger';
 import db from './db';
@@ -16,6 +17,7 @@ export default function startApp(port) {
   app.use(cors());
   app.use(compression());
   app.use(serveStatic(path.resolve(__dirname, '..', 'public')));
+  app.use(bodyParser.json());
 
   app.use('/api', api);
   app.get('/', (req, res) => {

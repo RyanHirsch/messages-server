@@ -3,6 +3,7 @@ import faker from 'faker';
 
 import startApp from '../../src/app';
 import Group from '../../src/models/group-model';
+import GroupSerializer from '../../src/serializers/group-serializer';
 
 function fakeGroup() {
   return {
@@ -53,4 +54,20 @@ describe('Acceptance: /api/groups', () => {
       .then(({ data }) => {
         expect(data.data.id).toEqual(expect.any(String));
       }));
+
+  it('can POST a single group', () => {
+    const groupToPersist = fakeGroup();
+    return api
+      .post('/groups', GroupSerializer.serialize(groupToPersist))
+      .then(resp => {
+        const { id } = resp.data.data;
+        const urlMatch = new RegExp(`/groups/${id}$`);
+        expect(resp.status).toEqual(201);
+        expect(resp.headers.location).toMatch(urlMatch);
+        return api.get(`/groups/${id}`);
+      })
+      .then(({ data }) => {
+        expect(data.data.attributes).toEqual(groupToPersist);
+      });
+  });
 });
