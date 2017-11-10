@@ -1,4 +1,4 @@
-import { getAll, getOneById, create } from '../queries/group-queries';
+import { getAll, getOneById, create, update } from '../queries/group-queries';
 import GroupSerializer, { deserialize } from '../serializers/group-serializer';
 
 export function getAllHandler() {
@@ -13,4 +13,8 @@ export function postHandler(newGroup) {
   return deserialize(newGroup)
     .then(create)
     .then(group => GroupSerializer.serialize(group));
+}
+
+export function putHandler(id, updatedGroup) {
+  return update(id, updatedGroup.data).then(group => GroupSerializer.serialize(group));
 }

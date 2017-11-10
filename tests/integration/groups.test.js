@@ -70,4 +70,35 @@ describe('Acceptance: /api/groups', () => {
         expect(data.data.attributes).toEqual(groupToPersist);
       });
   });
+
+  it('can PUT a single group', () => {
+    const newName = `Foo-${Math.random()}`;
+    const groupToPersist = fakeGroup();
+    return api
+      .post('/groups', GroupSerializer.serialize(groupToPersist))
+      .then(resp => {
+        const { id } = resp.data.data;
+        return api.get(`/groups/${id}`);
+      })
+      .then(({ data }) => {
+        const { id, attributes } = data.data;
+        expect(attributes).toEqual(groupToPersist);
+
+        return api.put(`/groups/${id}`, {
+          data: {
+            ...data.attributes,
+            id,
+            name: newName,
+          },
+        });
+      })
+      .then(resp => {
+        const { id } = resp.data.data;
+        return api.get(`/groups/${id}`);
+      })
+      .then(({ data }) => {
+        const { attributes } = data.data;
+        expect(attributes.name).toEqual(newName);
+      });
+  });
 });

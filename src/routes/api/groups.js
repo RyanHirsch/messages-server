@@ -1,23 +1,28 @@
 import express from 'express';
-import { getAllHandler, getHandler, postHandler } from '../../handlers/groups-handler';
+import * as Handlers from '../../handlers/groups-handler';
 
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  getAllHandler().then(groups => res.json(groups));
+  Handlers.getAllHandler().then(groups => res.json(groups));
 });
 
 route.get('/:id', (req, res) => {
-  getHandler(req.params.id).then(group => res.json(group));
+  Handlers.getHandler(req.params.id).then(group => res.json(group));
 });
 
 route.post('/', (req, res) => {
-  postHandler(req.body).then(group =>
+  Handlers.postHandler(req.body).then(group =>
     res
       .status(201)
       .location(`${req.baseUrl}/${group.data.id}`)
       .json(group)
   );
+});
+
+route.put('/:id', (req, res) => {
+  console.log(req.body);
+  Handlers.putHandler(req.params.id, req.body).then(group => res.json(group));
 });
 
 export default route;

@@ -15,3 +15,9 @@ export function getOneById(id) {
 export function create(group) {
   return new Group(group).save();
 }
+
+export function update(id, group) {
+  return Group.findOneAndUpdate({ _id: id }, group, { new: true })
+    .exec()
+    .then(result => console.log(result) || result);
+}
