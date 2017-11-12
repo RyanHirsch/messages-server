@@ -55,6 +55,14 @@ describe('Acceptance: /api/groups', () => {
         expect(data.data.id).toEqual(expect.any(String));
       }));
 
+  it('can DELETE a single group', () =>
+    Group.findOne()
+      .exec()
+      .then(group => api.delete(`/groups/${group._id}`)) // eslint-disable-line no-underscore-dangle
+      .then(({ status }) => {
+        expect(status).toEqual(204);
+      }));
+
   it('can POST a single group', () => {
     const groupToPersist = fakeGroup();
     return api

@@ -21,3 +21,7 @@ export function update(id, group) {
     .exec()
     .then(result => console.log(result) || result);
 }
+
+export function deleteById(id) {
+  return Group.findByIdAndRemove(id).exec();
+}

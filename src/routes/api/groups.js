@@ -21,8 +21,11 @@ route.post('/', (req, res) => {
 });
 
 route.put('/:id', (req, res) => {
-  console.log(req.body);
   Handlers.putHandler(req.params.id, req.body).then(group => res.json(group));
+});
+
+route.delete('/:id', (req, res) => {
+  Handlers.deleteHandler(req.params.id).then(() => res.status(204).send());
 });
 
 export default route;
