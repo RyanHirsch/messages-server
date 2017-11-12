@@ -59,9 +59,12 @@ describe('Acceptance: /api/groups', () => {
     Group.findOne()
       .exec()
       .then(group => api.delete(`/groups/${group._id}`)) // eslint-disable-line no-underscore-dangle
-      .then(({ status }) => {
+      .then(({ request, status }) => {
+        const id = request.path.replace('/api/groups/', '');
         expect(status).toEqual(204);
-      }));
+        return Group.findById(id).exec();
+      })
+      .then(foundItem => expect(foundItem).toBeNull()));
 
   it('can POST a single group', () => {
     const groupToPersist = fakeGroup();
