@@ -33,16 +33,16 @@ describe('Acceptance: /api/people', () => {
   });
 
   it('returns expected shape', () =>
-    api.get('/people').then(resp => {
-      expect(resp.data).toEqual(expect.any(Object));
-      expect(resp.data.data).toEqual(expect.any(Array));
+    api.get('/people').then(({ data }) => {
+      expect(data).toEqual(expect.any(Object));
+      expect(data.data).toEqual(expect.any(Array));
     }));
 
   it('can GET all people', () =>
-    api.get('/people').then(resp => {
-      expect(resp.data.data.length).toEqual(testSize);
-      resp.data.data.forEach(person => {
-        expect(people.map(x => x.name)).toContain(person.attributes.name);
+    api.get('/people').then(({ data }) => {
+      expect(data.data.length).toEqual(testSize);
+      data.data.forEach(person => {
+        expect(people.map(x => x.name)).toContain(person.name);
       });
     }));
 
@@ -50,7 +50,7 @@ describe('Acceptance: /api/people', () => {
     Person.findOne()
       .exec()
       .then(person => api.get(`/people/${person._id}`)) // eslint-disable-line no-underscore-dangle
-      .then(resp => {
-        expect(resp.data.data.id).toEqual(expect.any(String));
+      .then(({ data }) => {
+        expect(data.data.id).toEqual(expect.any(String));
       }));
 });
