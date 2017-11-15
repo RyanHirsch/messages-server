@@ -3,7 +3,6 @@ import faker from 'faker';
 
 import startApp from '../../src/app';
 import Group from '../../src/models/group-model';
-import groupSerializer from '../../src/serializers/group-serializer';
 
 function fakeGroup() {
   return {

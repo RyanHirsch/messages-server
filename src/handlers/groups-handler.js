@@ -1,5 +1,5 @@
 import { create, deleteById, getAll, getOneById, update } from '../queries/group-queries';
-import groupSerializer from '../serializers/group-serializer';
+import groupSerializer from '../serializers/generic-serializer';
 
 export function getAllHandler() {
   return getAll().then(groupSerializer);
