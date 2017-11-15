@@ -3,7 +3,7 @@ import faker from 'faker';
 
 import startApp from '../../src/app';
 import Group from '../../src/models/group-model';
-import GroupSerializer from '../../src/serializers/group-serializer';
+import groupSerializer from '../../src/serializers/group-serializer';
 
 function fakeGroup() {
   return {
@@ -43,7 +43,7 @@ describe('Acceptance: /api/groups', () => {
     api.get('/groups').then(response => {
       expect(response.data.data.length).toEqual(testSize);
       response.data.data.forEach(group => {
-        expect(groups.map(x => x.name)).toContain(group.attributes.name);
+        expect(groups.map(x => x.name)).toContain(group.name);
       });
     }));
 
@@ -69,16 +69,16 @@ describe('Acceptance: /api/groups', () => {
   it('can POST a single group', () => {
     const groupToPersist = fakeGroup();
     return api
-      .post('/groups', GroupSerializer.serialize(groupToPersist))
-      .then(resp => {
-        const { id } = resp.data.data;
+      .post('/groups', { data: groupToPersist })
+      .then(({ data, status, headers }) => {
+        const { id } = data.data;
         const urlMatch = new RegExp(`/groups/${id}$`);
-        expect(resp.status).toEqual(201);
-        expect(resp.headers.location).toMatch(urlMatch);
+        expect(status).toEqual(201);
+        expect(headers.location).toMatch(urlMatch);
         return api.get(`/groups/${id}`);
       })
       .then(({ data }) => {
-        expect(data.data.attributes).toEqual(groupToPersist);
+        expect(data.data).toMatchObject(groupToPersist);
       });
   });
 
@@ -86,19 +86,19 @@ describe('Acceptance: /api/groups', () => {
     const newName = `Foo-${Math.random()}`;
     const groupToPersist = fakeGroup();
     return api
-      .post('/groups', GroupSerializer.serialize(groupToPersist))
+      .post('/groups', { data: groupToPersist })
       .then(resp => {
         const { id } = resp.data.data;
         return api.get(`/groups/${id}`);
       })
       .then(({ data }) => {
-        const { id, attributes } = data.data;
-        expect(attributes).toEqual(groupToPersist);
+        const group = data.data;
+        expect(group).toMatchObject(groupToPersist);
 
-        return api.put(`/groups/${id}`, {
+        return api.put(`/groups/${group.id}`, {
           data: {
             ...data.attributes,
-            id,
+            id: group.id,
             name: newName,
           },
         });
@@ -108,8 +108,7 @@ describe('Acceptance: /api/groups', () => {
         return api.get(`/groups/${id}`);
       })
       .then(({ data }) => {
-        const { attributes } = data.data;
-        expect(attributes.name).toEqual(newName);
+        expect(data.data.name).toEqual(newName);
       });
   });
 });

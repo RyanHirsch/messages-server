@@ -19,7 +19,7 @@ export function create(group) {
 export function update(id, group) {
   return Group.findOneAndUpdate({ _id: id }, group, { new: true })
     .exec()
-    .then(result => console.log(result) || result);
+    .then(result => result);
 }
 
 export function deleteById(id) {

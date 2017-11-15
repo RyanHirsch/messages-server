@@ -1,22 +1,20 @@
 import { create, deleteById, getAll, getOneById, update } from '../queries/group-queries';
-import GroupSerializer, { deserialize } from '../serializers/group-serializer';
+import groupSerializer from '../serializers/group-serializer';
 
 export function getAllHandler() {
-  return getAll().then(groups => GroupSerializer.serialize(groups));
+  return getAll().then(groupSerializer);
 }
 
 export function getHandler(id) {
-  return getOneById(id).then(group => GroupSerializer.serialize(group));
+  return getOneById(id).then(groupSerializer);
 }
 
 export function postHandler(newGroup) {
-  return deserialize(newGroup)
-    .then(create)
-    .then(group => GroupSerializer.serialize(group));
+  return create(newGroup.data).then(groupSerializer);
 }
 
 export function putHandler(id, updatedGroup) {
-  return update(id, updatedGroup.data).then(group => GroupSerializer.serialize(group));
+  return update(id, updatedGroup.data).then(groupSerializer);
 }
 
 export function deleteHandler(id) {

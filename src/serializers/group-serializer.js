@@ -1,12 +1,17 @@
-import {
-  Serializer as JSONAPISerializer,
-  Deserializer as JSONAPIDeserializer,
-} from 'jsonapi-serializer';
+function toJson(obj) {
+  if (obj.toJSON) {
+    return obj.toJSON();
+  }
+  return obj;
+}
 
-export default new JSONAPISerializer('users', {
-  attributes: ['name'],
-});
-
-export function deserialize(obj) {
-  return new JSONAPIDeserializer().deserialize(obj);
+export default function serializer(obj) {
+  if (Array.isArray(obj)) {
+    return {
+      data: obj.map(toJson),
+    };
+  }
+  return {
+    data: toJson(obj),
+  };
 }
