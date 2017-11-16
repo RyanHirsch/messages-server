@@ -69,4 +69,44 @@ describe('Acceptance: /api/people', () => {
         expect(data.data).toMatchObject(personToPersist);
       });
   });
+
+  it('can DELETE a single group', () =>
+    Person.findOne()
+      .exec()
+      .then(person => api.delete(`/people/${person._id}`)) // eslint-disable-line no-underscore-dangle
+      .then(({ request, status }) => {
+        const id = request.path.replace('/api/people/', '');
+        expect(status).toEqual(204);
+        return Person.findById(id).exec();
+      })
+      .then(foundItem => expect(foundItem).toBeNull()));
+  it('can PUT a single person', () => {
+    const newName = `Foo-${Math.random()}`;
+    const personToPersist = fakePerson();
+    return api
+      .post('/people', { data: personToPersist })
+      .then(resp => {
+        const { id } = resp.data.data;
+        return api.get(`/people/${id}`);
+      })
+      .then(({ data }) => {
+        const person = data.data;
+        expect(person).toMatchObject(personToPersist);
+
+        return api.put(`/people/${person.id}`, {
+          data: {
+            ...data.attributes,
+            id: person.id,
+            name: newName,
+          },
+        });
+      })
+      .then(resp => {
+        const { id } = resp.data.data;
+        return api.get(`/people/${id}`);
+      })
+      .then(({ data }) => {
+        expect(data.data.name).toEqual(newName);
+      });
+  });
 });

@@ -20,4 +20,12 @@ route.post('/', (req, res) => {
   );
 });
 
+route.put('/:id', (req, res) => {
+  Handlers.putHandler(req.params.id, req.body).then(person => res.json(person));
+});
+
+route.delete('/:id', (req, res) => {
+  Handlers.deleteHandler(req.params.id).then(() => res.status(204).send());
+});
+
 export default route;
