@@ -1,14 +1,8 @@
 import axios from 'axios';
-import faker from 'faker';
 
 import startApp from '../../src/app';
 import Person from '../../src/models/person-model';
-
-function fakePerson() {
-  return {
-    name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-  };
-}
+import { fakePerson } from '../utils';
 
 describe('Acceptance: /api/people', () => {
   let app;

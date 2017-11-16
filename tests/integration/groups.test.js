@@ -1,14 +1,8 @@
 import axios from 'axios';
-import faker from 'faker';
 
 import startApp from '../../src/app';
+import { fakeGroup } from '../utils';
 import Group from '../../src/models/group-model';
-
-function fakeGroup() {
-  return {
-    name: `${faker.hacker.noun()}`,
-  };
-}
 
 describe('Acceptance: /api/groups', () => {
   let app;
