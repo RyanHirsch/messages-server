@@ -53,4 +53,20 @@ describe('Acceptance: /api/people', () => {
       .then(({ data }) => {
         expect(data.data.id).toEqual(expect.any(String));
       }));
+
+  it('can POST a single person', () => {
+    const personToPersist = fakePerson();
+    return api
+      .post('/people', { data: personToPersist })
+      .then(({ data, status, headers }) => {
+        const { id } = data.data;
+        const urlMatch = new RegExp(`/people/${id}$`);
+        expect(status).toEqual(201);
+        expect(headers.location).toMatch(urlMatch);
+        return api.get(`/people/${id}`);
+      })
+      .then(({ data }) => {
+        expect(data.data).toMatchObject(personToPersist);
+      });
+  });
 });

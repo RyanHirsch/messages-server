@@ -11,3 +11,17 @@ export function getOne(query) {
 export function getOneById(id) {
   return getOne({ _id: id });
 }
+
+export function create(person) {
+  return new Person(person).save();
+}
+
+export function update(id, person) {
+  return Person.findOneAndUpdate({ _id: id }, person, { new: true })
+    .exec()
+    .then(result => result);
+}
+
+export function deleteById(id) {
+  return Person.findByIdAndRemove(id).exec();
+}

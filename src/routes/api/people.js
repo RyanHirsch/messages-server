@@ -1,14 +1,23 @@
 import express from 'express';
-import { getAllHandler, getHandler } from '../../handlers/people-handler';
+import * as Handlers from '../../handlers/people-handler';
 
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  getAllHandler().then(people => res.json(people));
+  Handlers.getAllHandler().then(people => res.json(people));
 });
 
 route.get('/:id', (req, res) => {
-  getHandler(req.params.id).then(person => res.json(person));
+  Handlers.getHandler(req.params.id).then(person => res.json(person));
+});
+
+route.post('/', (req, res) => {
+  Handlers.postHandler(req.body).then(person =>
+    res
+      .status(201)
+      .location(`${req.baseUrl}/${person.data.id}`)
+      .json(person)
+  );
 });
 
 export default route;
