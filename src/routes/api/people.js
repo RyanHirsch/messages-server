@@ -4,7 +4,7 @@ import * as Handlers from '../../handlers/people-handler';
 const route = express.Router();
 
 route.get('/', (req, res) => {
-  Handlers.getAllHandler().then(people => res.json(people));
+  Handlers.getAllHandler(req.query).then(people => res.json(people));
 });
 
 route.get('/:id', (req, res) => {
