@@ -20,6 +20,7 @@ describe('People-Groups Relationships', () => {
   afterAll(() => {
     app.close();
   });
+
   it('can get a group then all people', async () => {
     const [p1, p2] = await createFakePeople(4);
     const [group] = await createFakeGroups(1);
@@ -45,6 +46,7 @@ describe('People-Groups Relationships', () => {
       expect(p.groups).toContain(firstGroup.id);
     });
   });
+
   it('can create a person then a group with relationship', async () => {
     const newPerson = fakePerson();
     const newGroup = fakeGroup();
@@ -56,6 +58,7 @@ describe('People-Groups Relationships', () => {
     const personWithGroup = await api.get(`/people/${person.id}`).then(requestData);
     expect(personWithGroup).toHaveProperty('groups', [group.id]);
   });
+
   it('can create a group then person with relationship', async () => {
     const newPerson = fakePerson();
     const newGroup = fakeGroup();
@@ -67,6 +70,8 @@ describe('People-Groups Relationships', () => {
     const groupWithPerson = await api.get(`/groups/${group.id}`).then(requestData);
     expect(groupWithPerson).toHaveProperty('people', [person.id]);
   });
+
   it('can create a person then add to an existing group');
+
   it('can create a group with multiple existing people');
 });
