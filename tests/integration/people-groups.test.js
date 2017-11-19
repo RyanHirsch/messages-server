@@ -3,7 +3,7 @@ import axios from 'axios';
 import startApp from '../../src/app';
 import Group from '../../src/models/group-model';
 import Person from '../../src/models/person-model';
-import { createFakePeople, createFakeGroups } from '../utils';
+import { createFakePeople, createFakeGroups, fakePerson, fakeGroup } from '../utils';
 
 describe('People-Groups Relationships', () => {
   let app;
@@ -15,6 +15,9 @@ describe('People-Groups Relationships', () => {
     app = await startApp(port);
     await Group.remove().exec();
     await Person.remove().exec();
+  });
+  afterAll(() => {
+    app.close();
   });
   it('can get a group then all people', async () => {
     const [p1, p2] = await createFakePeople(4);
@@ -41,6 +44,18 @@ describe('People-Groups Relationships', () => {
       expect(p.groups).toContain(firstGroup.id);
     });
   });
-  it('can create a person then group with relationship');
+  it('can create a person then a group with relationship', async () => {
+    const newPerson = fakePerson();
+    const newGroup = fakeGroup();
+    const person = await api.post('/people', { data: newPerson }).then(({ data }) => data.data);
+    const group = await api
+      .post('/groups', { data: { ...newGroup, people: [person.id] } })
+      .then(({ data }) => data.data);
+    expect(group).toHaveProperty('people', [person.id]);
+    const personWithGroup = await api.get(`/people/${person.id}`).then(({ data }) => data.data);
+    expect(personWithGroup).toHaveProperty('groups', [group.id]);
+  });
+  it('can create a group then person with relationship');
   it('can create a person then add to an existing group');
+  it('can create a group with multiple existing people');
 });
