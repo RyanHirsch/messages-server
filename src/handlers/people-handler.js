@@ -1,9 +1,16 @@
-import { create, deleteById, getAll, getOneById, update } from '../queries/person-queries';
+import {
+  create,
+  deleteById,
+  getAll,
+  getByIds,
+  getOneById,
+  update,
+} from '../queries/person-queries';
 import personSerializer from '../serializers/generic-serializer';
 
 export function getAllHandler(query) {
   if (query && query.id) {
-    return getAll({ _id: { $in: query.id.split(',') } }).then(people => personSerializer(people));
+    return getByIds(query.id.split(',')).then(people => personSerializer(people));
   }
   return getAll().then(people => personSerializer(people));
 }

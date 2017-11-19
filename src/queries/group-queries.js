@@ -12,6 +12,10 @@ export function getOneById(id) {
   return getOne({ _id: id });
 }
 
+export function getByIds(ids) {
+  return getAll({ _id: { $in: ids } });
+}
+
 export function create(group) {
   return new Group(group).save();
 }
