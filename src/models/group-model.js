@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 const schema = new Schema(
   {
     name: String,
-    people: [Schema.Types.ObjectId],
+    people: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
   },
   { timestamps: true }
 );

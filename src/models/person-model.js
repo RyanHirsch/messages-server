@@ -8,7 +8,7 @@ export const schema = new Schema(
     name: String,
     voicePhone: String,
     textPhone: String,
-    groups: [Schema.Types.ObjectId],
+    groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
     isActive: Boolean,
   },
   { timestamps: true }
