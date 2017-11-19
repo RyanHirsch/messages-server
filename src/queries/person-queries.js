@@ -1,4 +1,5 @@
 import Person from '../models/person-model';
+import Group from '../models/group-model';
 
 export function getAll(query) {
   return Person.find(query).exec();
@@ -17,7 +18,18 @@ export function getByIds(ids) {
 }
 
 export function create(person) {
-  return new Person(person).save();
+  return new Person(person).save().then(savedPerson =>
+    Promise.all(
+      (person.groups || []).map(g =>
+        Group.findById(g)
+          .exec()
+          .then(group => {
+            group.people.push(savedPerson);
+            return group.save();
+          })
+      )
+    ).then(() => savedPerson)
+  );
 }
 
 export function update(id, person) {

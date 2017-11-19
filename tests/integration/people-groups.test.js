@@ -6,6 +6,7 @@ import Person from '../../src/models/person-model';
 import { createFakePeople, createFakeGroups, fakePerson, fakeGroup } from '../utils';
 
 describe('People-Groups Relationships', () => {
+  const requestData = ({ data }) => data.data;
   let app;
   const port = Math.floor(Math.random() * 2000) + 3500;
   const api = axios.create({
@@ -31,7 +32,7 @@ describe('People-Groups Relationships', () => {
     group.people.push(p2);
     await group.save();
 
-    const [firstGroup] = await api.get('/groups').then(({ data }) => data.data);
+    const [firstGroup] = await api.get('/groups').then(requestData);
     expect(firstGroup.people).toEqual(expect.any(Array));
     expect(firstGroup.people).toEqual([p1.id, p2.id]);
 
@@ -47,15 +48,25 @@ describe('People-Groups Relationships', () => {
   it('can create a person then a group with relationship', async () => {
     const newPerson = fakePerson();
     const newGroup = fakeGroup();
-    const person = await api.post('/people', { data: newPerson }).then(({ data }) => data.data);
+    const person = await api.post('/people', { data: newPerson }).then(requestData);
     const group = await api
       .post('/groups', { data: { ...newGroup, people: [person.id] } })
       .then(({ data }) => data.data);
     expect(group).toHaveProperty('people', [person.id]);
-    const personWithGroup = await api.get(`/people/${person.id}`).then(({ data }) => data.data);
+    const personWithGroup = await api.get(`/people/${person.id}`).then(requestData);
     expect(personWithGroup).toHaveProperty('groups', [group.id]);
   });
-  it('can create a group then person with relationship');
+  it('can create a group then person with relationship', async () => {
+    const newPerson = fakePerson();
+    const newGroup = fakeGroup();
+    const group = await api.post('/groups', { data: newGroup }).then(requestData);
+    const person = await api
+      .post('/people', { data: { ...newPerson, groups: [group.id] } })
+      .then(({ data }) => data.data);
+    expect(person).toHaveProperty('groups', [group.id]);
+    const groupWithPerson = await api.get(`/groups/${group.id}`).then(requestData);
+    expect(groupWithPerson).toHaveProperty('people', [person.id]);
+  });
   it('can create a person then add to an existing group');
   it('can create a group with multiple existing people');
 });
