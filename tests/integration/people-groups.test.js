@@ -101,5 +101,18 @@ describe('People-Groups Relationships', () => {
     expect(groupWithPeople).toHaveProperty('people', []);
   });
 
-  it('can create a group with multiple existing people');
+  it('can create a group with multiple existing people', async () => {
+    const [p1, p2] = await createFakePeople(4);
+    const newGroup = fakeGroup();
+    const group = await api
+      .post('/groups', { data: { ...newGroup, people: [p1.id, p2.id] } })
+      .then(requestData);
+    expect(group).toHaveProperty('people', [p1.id, p2.id]);
+
+    const person1 = await api.get(`/people/${p1.id}`).then(requestData);
+    expect(person1).toHaveProperty('groups', [group.id]);
+
+    const person2 = await api.get(`/people/${p2.id}`).then(requestData);
+    expect(person2).toHaveProperty('groups', [group.id]);
+  });
 });
