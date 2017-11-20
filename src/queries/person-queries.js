@@ -70,5 +70,7 @@ export function update(id, person) {
 }
 
 export function deleteById(id) {
-  return Person.findByIdAndRemove(id).exec();
+  return Promise.all([getOneById(id), Group.find({ people: id }).exec()])
+    .then(([person, groups]) => [person, removePersonFromGroups(groups, person)])
+    .then(([person]) => person.remove());
 }

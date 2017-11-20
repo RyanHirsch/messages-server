@@ -147,4 +147,38 @@ describe('People-Groups Relationships', () => {
       .then(requestData);
     expect(groupWithPerson).toHaveProperty('people', [], 'Empty People after update');
   });
+
+  it('deleting a group updates the related person', async () => {
+    const [p1] = await createFakePeople(1);
+    const [g1] = await createFakeGroups(1);
+
+    p1.groups.push(g1);
+    await p1.save();
+    g1.people.push(p1);
+    await g1.save();
+
+    const group = await api.get(`/groups/${g1.id}`).then(requestData);
+    expect(group.people).toEqual([p1.id]);
+
+    await api.delete(`/groups/${g1.id}`);
+    const person = await api.get(`/people/${p1.id}`).then(requestData);
+    expect(person.groups).toEqual([]);
+  });
+
+  it('deleting a person updates the related group', async () => {
+    const [p1] = await createFakePeople(1);
+    const [g1] = await createFakeGroups(1);
+
+    p1.groups.push(g1);
+    await p1.save();
+    g1.people.push(p1);
+    await g1.save();
+
+    const person = await api.get(`/people/${p1.id}`).then(requestData);
+    expect(person.groups).toEqual([g1.id]);
+
+    await api.delete(`/people/${p1.id}`);
+    const group = await api.get(`/groups/${g1.id}`).then(requestData);
+    expect(group.people).toEqual([]);
+  });
 });
