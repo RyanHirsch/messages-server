@@ -83,5 +83,23 @@ describe('People-Groups Relationships', () => {
     expect(groupWithPerson).toHaveProperty('people', [person.id]);
   });
 
+  it('can create a group then person with relationship, then remove them from the group', async () => {
+    const newPerson = fakePerson();
+    const newGroup = fakeGroup();
+    const group = await api.post('/groups', { data: newGroup }).then(requestData);
+    const person = await api
+      .post('/people', { data: { ...newPerson, groups: [group.id] } })
+      .then(requestData);
+    expect(person).toHaveProperty('groups', [group.id]);
+    const groupWithPerson = await api.get(`/groups/${group.id}`).then(requestData);
+    expect(groupWithPerson).toHaveProperty('people', [person.id]);
+    const personWithoutGroups = await api
+      .put(`/people/${person.id}`, { data: { ...person, groups: [] } })
+      .then(requestData);
+    expect(personWithoutGroups).toHaveProperty('groups', []);
+    const groupWithPeople = await api.get(`/groups/${group.id}`).then(requestData);
+    expect(groupWithPeople).toHaveProperty('people', []);
+  });
+
   it('can create a group with multiple existing people');
 });
