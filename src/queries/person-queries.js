@@ -17,34 +17,36 @@ export function getByIds(ids) {
   return getAll({ _id: { $in: ids } });
 }
 
-function addUserToGroups(groups = [], user) {
+function addPersonToGroups(groups = [], person) {
   return Promise.all(
     groups.map(g =>
       Group.findById(g)
         .exec()
         .then(group => {
-          group.people.push(user);
+          group.people.push(person);
           return group.save();
         })
     )
-  ).then(() => user);
+  ).then(() => person);
 }
 
-function removeUserFromGroups(groups = [], user) {
+function removePersonFromGroups(groups = [], person) {
   return Promise.all(
     groups.map(g =>
       Group.findById(g)
         .exec()
         .then(group => {
-          group.people.pull(user);
+          group.people.pull(person);
           return group.save();
         })
     )
-  ).then(() => user);
+  ).then(() => person);
 }
 
 export function create(person) {
-  return new Person(person).save().then(savedPerson => addUserToGroups(person.groups, savedPerson));
+  return new Person(person)
+    .save()
+    .then(savedPerson => addPersonToGroups(person.groups, savedPerson));
 }
 
 export function update(id, person) {
@@ -61,8 +63,8 @@ export function update(id, person) {
       ]);
 
       return Promise.all([
-        addUserToGroups(toAdd, updated),
-        removeUserFromGroups(toRemove, updated),
+        addPersonToGroups(toAdd, updated),
+        removePersonFromGroups(toRemove, updated),
       ]).then(([p]) => p);
     });
 }
