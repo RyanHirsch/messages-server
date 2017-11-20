@@ -17,25 +17,53 @@ export function getByIds(ids) {
   return getAll({ _id: { $in: ids } });
 }
 
+function addGroupToPeople(people = [], group) {
+  return Promise.all(
+    people.map(p =>
+      Person.findById(p)
+        .exec()
+        .then(person => {
+          person.groups.push(group);
+          return person.save();
+        })
+    )
+  ).then(() => group);
+}
+
+function removeGroupFromPeople(people = [], group) {
+  return Promise.all(
+    people.map(p =>
+      Person.findById(p)
+        .exec()
+        .then(person => {
+          person.groups.pull(group);
+          return person.save();
+        })
+    )
+  ).then(() => group);
+}
 export function create(group) {
-  return new Group(group).save().then(savedGroup =>
-    Promise.all(
-      (group.people || []).map(p =>
-        Person.findById(p)
-          .exec()
-          .then(person => {
-            person.groups.push(savedGroup);
-            return person.save();
-          })
-      )
-    ).then(() => savedGroup)
-  );
+  return new Group(group).save().then(savedGroup => addGroupToPeople(group.people, savedGroup));
 }
 
 export function update(id, group) {
-  return Group.findOneAndUpdate({ _id: id }, group, { new: true })
-    .exec()
-    .then(result => result);
+  return getOneById(id)
+    .then(original =>
+      Promise.all([original, Group.findOneAndUpdate({ _id: id }, group, { new: true }).exec()])
+    )
+    .then(([original, updated]) => {
+      const toAdd = original.people.reduce((add, p) => add.filter(x => x !== p), [
+        ...updated.people,
+      ]);
+      const toRemove = updated.people.reduce((remove, p) => remove.filter(x => x !== p), [
+        ...original.people,
+      ]);
+
+      return Promise.all([
+        addGroupToPeople(toAdd, updated),
+        removeGroupFromPeople(toRemove, updated),
+      ]).then(([g]) => g);
+    });
 }
 
 export function deleteById(id) {

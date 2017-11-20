@@ -115,4 +115,36 @@ describe('People-Groups Relationships', () => {
     const person2 = await api.get(`/people/${p2.id}`).then(requestData);
     expect(person2).toHaveProperty('groups', [group.id]);
   });
+
+  it('can update a group with a person', async () => {
+    const [p1] = await createFakePeople(4);
+    const newGroup = fakeGroup();
+    const group = await api.post('/groups', { data: newGroup }).then(requestData);
+    expect(group).toHaveProperty('people', []);
+
+    const groupWithPerson = await api
+      .put(`/groups/${group.id}`, { data: { ...group, people: [p1.id] } })
+      .then(requestData);
+    expect(groupWithPerson).toHaveProperty('people', [p1.id]);
+
+    const person1 = await api.get(`/people/${p1.id}`).then(requestData);
+    expect(person1).toHaveProperty('groups', [group.id]);
+  });
+
+  it('can update a group to remove a person', async () => {
+    const [p1] = await createFakePeople(1);
+    const newGroup = fakeGroup();
+    const group = await api
+      .post('/groups', { data: { ...newGroup, groups: [p1.id] } })
+      .then(requestData);
+    expect(group).toHaveProperty('people', [p1.id], 'Person ID is available through the group');
+
+    const person1 = await api.get(`/people/${p1.id}`).then(requestData);
+    expect(person1).toHaveProperty('groups', [group.id], 'Group ID is associated with the person');
+
+    const groupWithPerson = await api
+      .put(`/groups/${group.id}`, { data: { ...group, people: [] } })
+      .then(requestData);
+    expect(groupWithPerson).toHaveProperty('people', [], 'Empty People after update');
+  });
 });
