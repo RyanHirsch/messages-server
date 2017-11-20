@@ -37,9 +37,7 @@ describe('People-Groups Relationships', () => {
     expect(firstGroup.people).toEqual(expect.any(Array));
     expect(firstGroup.people).toEqual([p1.id, p2.id]);
 
-    const people = await api
-      .get(`/people?id=${firstGroup.people.join(',')}`)
-      .then(({ data }) => data.data);
+    const people = await api.get(`/people?id=${firstGroup.people.join(',')}`).then(requestData);
     expect(people).toHaveLength(2);
     people.forEach(p => {
       expect(p.groups).toEqual(expect.any(Array));
@@ -53,7 +51,7 @@ describe('People-Groups Relationships', () => {
     const person = await api.post('/people', { data: newPerson }).then(requestData);
     const group = await api
       .post('/groups', { data: { ...newGroup, people: [person.id] } })
-      .then(({ data }) => data.data);
+      .then(requestData);
     expect(group).toHaveProperty('people', [person.id]);
     const personWithGroup = await api.get(`/people/${person.id}`).then(requestData);
     expect(personWithGroup).toHaveProperty('groups', [group.id]);
@@ -65,13 +63,25 @@ describe('People-Groups Relationships', () => {
     const group = await api.post('/groups', { data: newGroup }).then(requestData);
     const person = await api
       .post('/people', { data: { ...newPerson, groups: [group.id] } })
-      .then(({ data }) => data.data);
+      .then(requestData);
     expect(person).toHaveProperty('groups', [group.id]);
     const groupWithPerson = await api.get(`/groups/${group.id}`).then(requestData);
     expect(groupWithPerson).toHaveProperty('people', [person.id]);
   });
 
-  it('can create a person then add to an existing group');
+  it('can create a person then add to an existing group', async () => {
+    const [group] = await createFakeGroups(1);
+    const newPerson = fakePerson();
+
+    const person = await api.post('/people', { data: newPerson }).then(requestData);
+    const updatedPerson = await api
+      .put(`/people/${person.id}`, { data: { ...person, groups: [group.id] } })
+      .then(requestData);
+
+    expect(updatedPerson).toHaveProperty('groups', [group.id]);
+    const groupWithPerson = await api.get(`/groups/${group.id}`).then(requestData);
+    expect(groupWithPerson).toHaveProperty('people', [person.id]);
+  });
 
   it('can create a group with multiple existing people');
 });

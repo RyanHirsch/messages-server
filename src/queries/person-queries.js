@@ -33,7 +33,13 @@ export function create(person) {
 }
 
 export function update(id, person) {
-  return Person.findOneAndUpdate({ _id: id }, person, { new: true }).exec();
+  return getOneById(id)
+    .then(original =>
+      Promise.all([original, Person.findOneAndUpdate({ _id: id }, person, { new: true }).exec()])
+    )
+    .then(([original, updated]) => {
+      console.log({ original, updated });
+    });
 }
 
 export function deleteById(id) {

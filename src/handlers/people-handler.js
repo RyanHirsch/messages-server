@@ -19,7 +19,7 @@ export function getHandler(id) {
 }
 
 export function postHandler(newPerson) {
-  return create(newPerson.data).then(personSerializer);
+  return create(newPerson.data).then(person => personSerializer(person));
 }
 
 export function putHandler(id, updatedPerson) {
