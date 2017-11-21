@@ -11,13 +11,15 @@ route.get('/:id', (req, res) => {
   Handlers.getHandler(req.params.id).then(group => res.json(group));
 });
 
-route.post('/', (req, res) => {
-  Handlers.postHandler(req.body).then(group =>
-    res
-      .status(201)
-      .location(`${req.baseUrl}/${group.data.id}`)
-      .json(group)
-  );
+route.post('/', (req, res, next) => {
+  Handlers.postHandler(req.body)
+    .then(group =>
+      res
+        .status(201)
+        .location(`${req.baseUrl}/${group.data.id}`)
+        .json(group)
+    )
+    .catch(next);
 });
 
 route.put('/:id', (req, res) => {

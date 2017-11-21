@@ -104,4 +104,18 @@ describe('Acceptance: /api/groups', () => {
         expect(data.data.name).toEqual(newName);
       });
   });
+
+  it('fails with a bad request when no name is given', () =>
+    api
+      .post('/groups', { data: {} })
+      .then(() => expect().toEqual('Should catch with error code'))
+      .catch(({ response }) => {
+        expect(response.status).toEqual(400);
+        expect(response.data).toMatchObject({
+          errors: expect.any(Array),
+        });
+        expect(response.data.errors[0]).toMatchObject({
+          title: 'A group must have a name',
+        });
+      }));
 });
